@@ -45,6 +45,6 @@
   - (2.8.3) {id, idBuku, idPengguna, tglPengembalian, createdAt, createdBy, updatedBy}
 - (2.9) input pengembalian buku
   - (2.9.1) PUT ke id peminjaman
-  - (2.9.2) {tglPengembalian}
+  - (2.9.2) {tglPengembalian, createdBy}
 - (2.10) daftar buku dipinjam
 - (2.11) keluar (menuju halaman masuk)
