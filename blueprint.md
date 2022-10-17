@@ -3,8 +3,6 @@
 ## (1) hal login
 
 - (1.1) admin
-- (1.2) pengguna
-- (1.3) tamu
 - (1.4) keluar aplikasi
 
 ## (2) hal punya admin
