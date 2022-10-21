@@ -3,29 +3,17 @@ import json
 import shutil
 import getpass
 import sys
+from API import API as api
 
 class LibraryApp:
+    """LibraryApp administration"""
     def __init__(self) -> None:
         os.system("cls")
         self.is_login = False
         self.size_terminal = shutil.get_terminal_size().columns
-        self.db_path = "databases"
-        self.check_user_db()
+        api.create_user()
         self.header()
         self.login_menu()
-    
-    def check_user_db(self):
-        is_user_json_exist = os.path.exists(f"{self.db_path}\\User.json")
-        if is_user_json_exist == False:
-            os.mkdir("databases")
-            admin = {"username": "admin", "password": "admin"}
-            json_string = json.dumps(admin)
-            with open("databases\\User.json", "w") as user:
-                user.write(json_string)
-                user.close()
-            print("berhasil membuat user admin dengan password admin, silahkan ganti password di menu ubah pengguna")
-            input("Tekan (Enter) untuk menuju halaman login")
-        return
 
     def header(self):
         os.system("cls")
@@ -41,12 +29,9 @@ class LibraryApp:
         print(" Selamat datang di perpustakaan ".center(self.size_terminal, "*"))
         print("*"*self.size_terminal)
         print("")
-        return
 
     def login_validation(self, username, password):
-        with open(f"{self.db_path}\\User.json", "r") as json_file:
-            user = json.load(json_file)
-
+        user = api.get_user()
         result = {}
 
         if username != user["username"]:

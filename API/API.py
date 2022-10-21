@@ -7,12 +7,17 @@ def get_user():
         user = json.load(json_file)
         return user 
 
-def create_user(db_path):
-    is_user_json_exist = os.path.exists(f"{db_path}\\User.json") 
-    if is_user_json_exist == False:
+def create_user():
+    is_user_json_exist = os.path.exists("databases\\User.json") 
+    if not is_user_json_exist:
         os.mkdir("databases")
         admin = {"username": "admin", "password": "admin"}
         json_string = json.dumps(admin)
         with open("databases\\User.json", "w") as user:
             user.write(json_string)
             user.close()
+        print("berhasil membuat databases user")
+        input("tekan Enter untuk melanjutkan ke halaman login")
+    
+    if is_user_json_exist:
+        print("berhasil terhubung ke databases user")
