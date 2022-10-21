@@ -7,6 +7,7 @@ import sys
 class LibraryApp:
     def __init__(self) -> None:
         os.system("cls")
+        self.is_login = False
         self.size_terminal = shutil.get_terminal_size().columns
         self.db_path = "databases"
         self.check_user_db()
@@ -62,7 +63,6 @@ class LibraryApp:
         result["detail"] = "berhasil login"
 
         return result 
-        
 
     def login_menu(self):
         is_password_correct = False
@@ -78,10 +78,10 @@ class LibraryApp:
             count_incorrect += 1
 
         if is_password_correct: 
+            self.is_login = True
             return self.dashboard_menu()
 
         return sys.exit()
-
 
     def dashboard_menu(self):
         os.system("cls")
