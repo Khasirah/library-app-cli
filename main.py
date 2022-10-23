@@ -82,14 +82,15 @@ class LibraryApp:
             print(f"selamat datang, {user['username']}".rjust(self.size_terminal))
             print(f"{bcolors.HEADER}INFORMASI{bcolors.ENDC}")
             print("-"*self.size_terminal)
-            print(f"{'Total Buku': <10}{'Total Buku Dipinjam': ^25}{'Total Buku Mendakati Jatuh Tempo': ^40}{'Total Buku Melewati Batas Pengembalian': >40}")
+            print(f"{'Total Buku': <10}{'Total Buku Dipinjam': ^25}{'Total Buku Mendakati Jatuh Tempo (H-3)': ^40}{'Total Buku Melewati Batas Pengembalian': >40}")
             print(f"{total_books: ^10}")
             print("="*self.size_terminal)
             self.dashboard_menu()
             input()
 
     def dashboard_menu(self):
-        print("Menu Aplikasi Perpustakaan")
+        print("")
+        print(f"{bcolors.HEADER}Menu Aplikasi Perpustakaan{bcolors.ENDC}")
         print("+"*30)
         print("1. tambah buku")
         print("2. update buku")
