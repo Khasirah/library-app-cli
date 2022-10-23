@@ -28,6 +28,8 @@ def create_db(db_name: str, data: list):
         print(f"berhasil terhubung ke databases {db_name}")
 
 # book json
+# ======================================
+# GET
 def get_total_book():
     with open(PATH_BOOKS, "r") as json_file:
         books = json.load(json_file)
@@ -38,14 +40,18 @@ def get_all_books():
         books = json.load(json_file)
         return books
 
+# --------------------------------------
+# POST
 def post_book(book_title, book_author, year_of_publication, publisher, created_by):
     books = get_all_books()
     book_id = len(books) + 1
+    time_now = int(round(time.time() * 1000))
     book = {
             "book_id": book_id,
             "book_title": book_title,
             "book_author": book_author,
             "year_of_publication":year_of_publication,
             "publisher": publisher,
-            "created_at": int(round(time.time() * 1000))
+            "created_at": time_now,
+            "updated_at": time_now 
             }    

@@ -13,7 +13,7 @@ class LibraryApp:
         self.size_terminal = shutil.get_terminal_size().columns
         api.create_db("User.json", [{"username": "admin", "password": "admin"}])
         api.create_db("Book.json", [])
-        input("Tekan enter untuk melanjutkan login")
+        input(f"Tekan {bcolors.OKBLUE}enter{bcolors.ENDC} untuk melanjutkan login")
         self.header()
         self.login_menu()
 
@@ -34,13 +34,14 @@ class LibraryApp:
 
     def login_validation(self, username, password):
         user = list(api.get_user(username))
-        user = user[0]
         result = {}
-
-        if username != user["username"]:
+      
+        if len(user) == 0:
             result["status"] = False
-            result["detail"] = "username tidak sesuai"
+            result["detail"] = "username tidak ditemukan"
             return result
+
+        user = user[0]
 
         if password != user["password"]:
             result["status"] = False
@@ -56,7 +57,7 @@ class LibraryApp:
         is_password_correct = False
         count_incorrect = 0
         username = ""
-      
+     
         while ((not is_password_correct) and (count_incorrect <= 2)):
             username = input("Username: ")
             password = getpass.getpass("Password: ")
