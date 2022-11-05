@@ -6,10 +6,22 @@ PATH_BOOKS = "databases\\Book.json"
 PATH_USER = "databases\\User.json"
 
 # user json
+# GET
 def get_user(username):
     with open(PATH_USER, "r") as json_file:
         users = json.load(json_file)
         return filter(lambda user: user["username"] == username, users)
+    
+def get_total_user():
+    with open(PATH_USER, "r") as json_file:
+        users = json.load(json_file)
+        return len(users)
+
+def get_users():
+    with open(PATH_USER, "r") as json_file:
+        users = json.load(json_file)
+        users = filter(lambda user: user.pop('password'), users)
+        return list(users)
 
 # create DB
 def create_db(db_name: str, data: list):
