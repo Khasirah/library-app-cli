@@ -12,7 +12,7 @@ class LibraryApp:
         os.system("cls")
         self.is_login = False
         self.size_terminal = shutil.get_terminal_size().columns
-        api.create_db("User.json", [{"username": "admin", "password": "admin", "nik": "1111111111111111", "nama": "admin"}])
+        api.create_db("User.json", [{"username": "admin", "password": "admin", "nik": "1111111111111111", "nama": "admin", "alamat": "admin"}])
         api.create_db("Book.json", [])
         input(f"Tekan {bcolors.OKBLUE}enter{bcolors.ENDC} untuk melanjutkan login")
         self.header()
@@ -34,7 +34,7 @@ class LibraryApp:
         print("*"*self.size_terminal)
 
     def login_validation(self, username, password):
-        user = list(api.get_user(username))
+        user = api.get_user(username)
         result = {}
       
         if len(user) == 0:
@@ -148,10 +148,33 @@ class LibraryApp:
         self.header()
         t = PrettyTable(["No", "NIK", "Nama", "Alamat"])
         for i in range(len(users)):
-            t.add_row([i+1, users[i]["username"], "bla", "bla bal"])
+            t.add_row([i+1, users[i]["nik"], users[i]["nama"], users[i]["alamat"]])
         print(t)
         input(f"Tekan {bcolors.OKBLUE}enter{bcolors.ENDC} untuk kembali ke {bcolors.HEADER}Pengguna Menu{bcolors.ENDC}")
         self.pengguna_menu()
+
+    def menu_tambah_pengguna(self):
+        again = True
+        while again:
+            data = {}
+            os.system("cls")
+            self.header()
+            print("")
+            result = {}
+            try:
+                data["nik"] = int(input("Masukkan NIK :"))
+                data["nama"] = input("Masukkan Nama :")
+                data["alamat"] = input("Masukkan Alamat :")
+                result = api.add_user(data)
+            except:
+                print(f"{bcolors.FAIL}NIK harus angka{bcolors.ENDC}")
+                confirm_again = input("Apakah Anda ingin menambah anggota lagi? (Y/n)")
+                if confirm_again not in ["y", "Y", "n", "N"]:
+                    raise Exception(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                if confirm_again != "N" or confirm_again != "n":
+                    again = False
+            print(result)
+            
 
 if __name__ == "__main__":
     app = LibraryApp()

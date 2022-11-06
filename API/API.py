@@ -1,3 +1,4 @@
+from collections import UserString
 import json
 import os
 import time
@@ -5,12 +6,24 @@ import time
 PATH_BOOKS = "databases\\Book.json"
 PATH_USER = "databases\\User.json"
 
+# write data to db
+def write_data_to_db(data, db):
+    json_string = json.dumps(data)
+    with open(db, "w") as db_file:
+        db_file.write(json_string)
+        db_file.close()
+
 # user json
+def open_db_users():
+    with open(PATH_USER, "r") as json_file:
+        users = json.load(json_file)
+        return users
+
 # GET
 def get_user(username):
     with open(PATH_USER, "r") as json_file:
         users = json.load(json_file)
-        return filter(lambda user: user["username"] == username, users)
+        return list(filter(lambda user: user["username"] == username, users))
     
 def get_total_user():
     with open(PATH_USER, "r") as json_file:
@@ -22,6 +35,26 @@ def get_users():
         users = json.load(json_file)
         users = filter(lambda user: user.pop('password'), users)
         return list(users)
+
+def get_user_by_nik(nik):
+    users = open_db_users()
+    return list(filter(lambda user: user["nik"] == nik, users))
+
+# POST
+def add_user(data):
+    user_exist = len(get_user_by_nik(data["nik"]))
+    if user_exist > 0:
+        return {"status": False, "detail": "pengguna telah terdaftar"}
+
+    users = open_db_users()
+    users.append(data)
+
+    try:
+        write_data_to_db(users, PATH_USER)
+    except Exception as e:
+        return {"status": False, "detail": e}
+
+    return {"status": True, "detail": "pengguna berhasil didaftarkan"}
 
 # create DB
 def create_db(db_name: str, data: list):
