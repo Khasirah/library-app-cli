@@ -51,10 +51,10 @@ def add_user(data):
 
     try:
         write_data_to_db(users, PATH_USER)
+        return {"status": True, "detail": "pengguna berhasil didaftarkan"}
     except Exception as e:
         return {"status": False, "detail": e}
 
-    return {"status": True, "detail": "pengguna berhasil didaftarkan"}
 
 # create DB
 def create_db(db_name: str, data: list):

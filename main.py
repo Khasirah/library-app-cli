@@ -74,6 +74,11 @@ class LibraryApp:
 
         return sys.exit()
 
+    def cetak_pengguna(self, username):
+        user = list(api.get_user(username))
+        user = user[0]
+        print(f"selamat datang, {user['username']}".rjust(self.size_terminal))
+
     def dashboard_page(self, username):
         os.system("cls")
         total_books = api.get_total_book()
@@ -88,14 +93,14 @@ class LibraryApp:
             print(f"{'Total Buku': <10}{'Total Pengguna': ^25}{'Total Buku Dipinjam': ^25}{'Total Buku Mendakati Jatuh Tempo (H-3)': ^40}{'Total Buku Melewati Batas Pengembalian': >40}")
             print(f"{total_books: ^10}{total_users: ^25}")
             print("="*self.size_terminal)
-            self.dashboard_menu()
+            self.dashboard_menu(username)
             input()
 
-    def dashboard_menu(self):
+    def dashboard_menu(self, username):
         menus = ["pengguna", "buku", "peminjaman buku", "keluar aplikasi"]
         choosen_menu = self.cetak_menu(menus, "Menu Aplikasi")
         if choosen_menu == 1:
-            self.pengguna_menu()
+            self.pengguna_menu(username)
         elif choosen_menu == 2:
             print(2)
         elif choosen_menu == 3:
@@ -124,15 +129,16 @@ class LibraryApp:
         quit()
 
 # bagian pengguna
-    def pengguna_menu(self):
+    def pengguna_menu(self, username):
         os.system("cls")
         self.header()
+        self.cetak_pengguna(username)
         menus = ["daftar pengguna", "tambah pengguna", "ubah pengguna", "hapus pengguna", "kembali ke dashboard", "keluar aplikasi"]
         choosen_menu = self.cetak_menu(menus, "Pengguna Menu")
         if choosen_menu == 1:
-            self.menu_daftar_pengguna()
+            self.menu_daftar_pengguna(username)
         elif choosen_menu == 2:
-            print(2)
+            self.menu_tambah_pengguna(username)
         elif choosen_menu == 3:
             print(3)
         elif choosen_menu == 4:
@@ -142,38 +148,56 @@ class LibraryApp:
         elif choosen_menu == 6:
             self.keluar_aplikasi() 
 
-    def menu_daftar_pengguna(self):
+    def menu_daftar_pengguna(self,username):
         users = api.get_users()
         os.system("cls")
         self.header()
+        self.cetak_pengguna(username)
         t = PrettyTable(["No", "NIK", "Nama", "Alamat"])
         for i in range(len(users)):
             t.add_row([i+1, users[i]["nik"], users[i]["nama"], users[i]["alamat"]])
         print(t)
         input(f"Tekan {bcolors.OKBLUE}enter{bcolors.ENDC} untuk kembali ke {bcolors.HEADER}Pengguna Menu{bcolors.ENDC}")
-        self.pengguna_menu()
+        self.pengguna_menu(username)
 
-    def menu_tambah_pengguna(self):
+    def menu_tambah_pengguna(self,username):
         again = True
         while again:
             data = {}
             os.system("cls")
             self.header()
+            self.cetak_pengguna(username)
             print("")
             result = {}
             try:
                 data["nik"] = int(input("Masukkan NIK :"))
+                data["username"] = data["nik"]
+                data["password"] = data["nik"]
                 data["nama"] = input("Masukkan Nama :")
                 data["alamat"] = input("Masukkan Alamat :")
                 result = api.add_user(data)
-            except:
-                print(f"{bcolors.FAIL}NIK harus angka{bcolors.ENDC}")
+                if result["status"]:
+                    print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+                if not result["status"]:
+                    print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
                 confirm_again = input("Apakah Anda ingin menambah anggota lagi? (Y/n)")
                 if confirm_again not in ["y", "Y", "n", "N"]:
                     raise Exception(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                if confirm_again != "N" or confirm_again != "n":
+                if confirm_again == "N" or confirm_again == "n":
                     again = False
-            print(result)
+            except:
+                print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}")
+                confirm = True
+                while confirm:
+                    confirm_again = input("Apakah Anda ingin menambah anggota lagi? (Y/n)")
+                    if confirm_again not in ["y", "Y", "n", "N"]:
+                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                    if confirm_again == "N" or confirm_again == "n":
+                        again = False
+                        confirm = False
+                    if confirm_again == "Y" or confirm_again == "y":
+                        confirm = False
+        self.pengguna_menu(username)
             
 
 if __name__ == "__main__":
