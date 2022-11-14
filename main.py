@@ -140,7 +140,7 @@ class LibraryApp:
         elif choosen_menu == 2:
             self.menu_tambah_pengguna(username)
         elif choosen_menu == 3:
-            print(3)
+            self.menu_ubah_pengguna(username)
         elif choosen_menu == 4:
             print(4)
         elif choosen_menu == 5:
@@ -170,11 +170,11 @@ class LibraryApp:
             print("")
             result = {}
             try:
-                data["nik"] = int(input("Masukkan NIK :"))
+                data["nik"] = int(input("Masukkan NIK : "))
                 data["username"] = data["nik"]
                 data["password"] = data["nik"]
-                data["nama"] = input("Masukkan Nama :")
-                data["alamat"] = input("Masukkan Alamat :")
+                data["nama"] = input("Masukkan Nama : ")
+                data["alamat"] = input("Masukkan Alamat : ")
                 result = api.add_user(data)
                 if result["status"]:
                     print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
@@ -198,7 +198,77 @@ class LibraryApp:
                     if confirm_again == "Y" or confirm_again == "y":
                         confirm = False
         self.pengguna_menu(username)
-            
+
+    def menu_ubah_pengguna(self, username):
+        again = True
+        while again:
+            data = {}
+            os.system("cls")
+            self.header()
+            self.cetak_pengguna(username)
+            print("")
+            result = {}
+            try:
+                nik = int(input("Masukkan NIK yang ingin diubah: "))
+                user = api.get_user(nik)
+                if len(user) > 0:
+                    user = user[0]
+                    print(f"NIK : {user['nik']}")
+                    print(f"Nama : {user['nama']}")
+                    print(f"Alamat : {user['alamat']}")
+                    print("data diubah menjadi:")
+                    data["nik"] = input("Masukkan NIK baru: ")
+                    if len(data["nik"]) == 0:
+                        data["nik"] = user["nik"]
+                    data["username"] = data["nik"]
+                    data["password"] = data["nik"]
+                    data["nama"] = input("Masukkan nama baru: ")
+                    if len(data["nama"]) == 0:
+                        data["nama"] = user["nama"]
+                    data["alamat"] = input("Masukkan alamat baru: ")
+                    if len(data["alamat"]) == 0:
+                        data["alamat"] = user["alamat"]
+                    if user == data:
+                        print(f"{bcolors.OKBLUE}data tidak ada yang berubah{bcolors.ENDC}")
+                        confirm_again = input("Apakah Anda ingin mengubah anggota lagi? (Y/n)")
+                        if confirm_again not in ["y", "Y", "n", "N"]:
+                            raise Exception(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                        if confirm_again == "N" or confirm_again == "n":
+                            again = False
+                        continue
+                    result = api.change_user(data)
+                    if result["status"]:
+                        print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+                if len(user) == 0:
+                    print(f"{bcolors.FAIL}user tidak ditemukan{bcolors.ENDC}")
+                confirm_again = input("Apakah Anda ingin mengubah anggota lagi? (Y/n)")
+                if confirm_again not in ["y", "Y", "n", "N"]:
+                    raise Exception(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                if confirm_again == "N" or confirm_again == "n":
+                    again = False
+            except:
+                print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}")
+                confirm = True            
+                while confirm:
+                    confirm_again = input("Apakah Anda ingin mengubah anggota lagi? (Y/n)")
+                    if confirm_again not in ["y", "Y", "n", "N"]:
+                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                    if confirm_again == "N" or confirm_again == "n":
+                        again = False
+                        confirm = False
+                    if confirm_again == "Y" or confirm_again == "y":
+                        confirm = False
+        self.pengguna_menu(username)
+    
+    def menu_hapus_pengguna(self, username):
+        again = True
+        while again:
+            data = {}
+            os.system("cls")
+            self.header()
+            self.cetak_pengguna(username)
+            print("")
+            result = {}
 
 if __name__ == "__main__":
     app = LibraryApp()
