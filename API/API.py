@@ -1,4 +1,3 @@
-from collections import UserString
 import json
 import os
 import time
@@ -56,15 +55,28 @@ def add_user(data):
         return {"status": False, "detail": e}
 
 # PUT
-def change_user(data):
+def change_user(data, nik_ubah):
     users = open_db_users()
-    users = list(filter(lambda user: user["nik"] != data["nik"], users))
+    users = list(filter(lambda user: user["nik"] != nik_ubah, users))
     users.append(data)
     json_string = json.dumps(users)
     with open(PATH_USER, "w") as db:
         db.write(json_string)
         db.close()
     return {"status": True, "detail": "berhasil mengubah data"}
+
+# DELETE
+def delete_user(username):
+    users = open_db_users()
+    user = list(filter(lambda user: user["nik"] == username, users))
+    if len(user) == 0:
+        return {"status": False, "detail": "pengguna tidak terdaftar"}
+    users = list(filter(lambda user: user["nik"] != username, users))
+    json_string = json.dumps(users)
+    with open(PATH_USER, "w") as db:
+        db.write(json_string)
+        db.close()
+    return {"status": True, "detail": "berhasil menghapus data"}
 
 # create DB
 def create_db(db_name: str, data: list):

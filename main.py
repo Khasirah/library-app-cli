@@ -94,19 +94,18 @@ class LibraryApp:
             print(f"{total_books: ^10}{total_users: ^25}")
             print("="*self.size_terminal)
             self.dashboard_menu(username)
-            input()
 
     def dashboard_menu(self, username):
         menus = ["pengguna", "buku", "peminjaman buku", "keluar aplikasi"]
         choosen_menu = self.cetak_menu(menus, "Menu Aplikasi")
         if choosen_menu == 1:
-            self.pengguna_menu(username)
+            return self.pengguna_menu(username)
         elif choosen_menu == 2:
             print(2)
         elif choosen_menu == 3:
             print(3)
         elif choosen_menu == 4:
-            self.keluar_aplikasi() 
+            return self.keluar_aplikasi() 
 
     def cetak_menu(self, menus: list, judul: str):
         print("")
@@ -136,17 +135,17 @@ class LibraryApp:
         menus = ["daftar pengguna", "tambah pengguna", "ubah pengguna", "hapus pengguna", "kembali ke dashboard", "keluar aplikasi"]
         choosen_menu = self.cetak_menu(menus, "Pengguna Menu")
         if choosen_menu == 1:
-            self.menu_daftar_pengguna(username)
+            return self.menu_daftar_pengguna(username)
         elif choosen_menu == 2:
-            self.menu_tambah_pengguna(username)
+            return self.menu_tambah_pengguna(username)
         elif choosen_menu == 3:
-            self.menu_ubah_pengguna(username)
+            return self.menu_ubah_pengguna(username)
         elif choosen_menu == 4:
-            print(4)
+            return self.menu_hapus_pengguna(username)
         elif choosen_menu == 5:
-            print(5)
+            return self.dashboard_page(username)
         elif choosen_menu == 6:
-            self.keluar_aplikasi() 
+            return self.keluar_aplikasi() 
 
     def menu_daftar_pengguna(self,username):
         users = api.get_users()
@@ -158,7 +157,7 @@ class LibraryApp:
             t.add_row([i+1, users[i]["nik"], users[i]["nama"], users[i]["alamat"]])
         print(t)
         input(f"Tekan {bcolors.OKBLUE}enter{bcolors.ENDC} untuk kembali ke {bcolors.HEADER}Pengguna Menu{bcolors.ENDC}")
-        self.pengguna_menu(username)
+        return self.pengguna_menu(username)
 
     def menu_tambah_pengguna(self,username):
         again = True
@@ -197,7 +196,7 @@ class LibraryApp:
                         confirm = False
                     if confirm_again == "Y" or confirm_again == "y":
                         confirm = False
-        self.pengguna_menu(username)
+        return self.pengguna_menu(username)
 
     def menu_ubah_pengguna(self, username):
         again = True
@@ -236,7 +235,8 @@ class LibraryApp:
                         if confirm_again == "N" or confirm_again == "n":
                             again = False
                         continue
-                    result = api.change_user(data)
+                    data["nik"] = int(data["nik"])
+                    result = api.change_user(data, nik)
                     if result["status"]:
                         print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
                 if len(user) == 0:
@@ -258,17 +258,55 @@ class LibraryApp:
                         confirm = False
                     if confirm_again == "Y" or confirm_again == "y":
                         confirm = False
-        self.pengguna_menu(username)
+        return self.pengguna_menu(username)
     
     def menu_hapus_pengguna(self, username):
         again = True
         while again:
-            data = {}
             os.system("cls")
             self.header()
             self.cetak_pengguna(username)
             print("")
             result = {}
+            nik = 0
+            try:
+                nik = int(input("Masukkan NIK yang ingin dihapus: "))
+            except:
+                print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}") 
+                confirm = True            
+                while confirm:
+                    confirm_again = input("Apakah Anda ingin menghapus anggota lagi? (Y/n)")
+                    if confirm_again not in ["y", "Y", "n", "N"]:
+                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                    if confirm_again == "N" or confirm_again == "n":
+                        again = False
+                        confirm = False
+                    if confirm_again == "Y" or confirm_again == "y":
+                        confirm = False
+                continue
+            result = api.delete_user(nik)
+            if result["status"]:
+                print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+                confirm_again = input("Apakah Anda ingin menghapus anggota lagi? (Y/n)")
+                if confirm_again not in ["y", "Y", "n", "N"]:
+                    print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                if confirm_again == "N" or confirm_again == "n":
+                    again = False
+                    confirm = False
+                if confirm_again == "Y" or confirm_again == "y":
+                    confirm = False
+            if not result["status"]:
+                print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
+                confirm_again = input("Apakah Anda ingin menghapus anggota lagi? (Y/n)")
+                if confirm_again not in ["y", "Y", "n", "N"]:
+                    print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                if confirm_again == "N" or confirm_again == "n":
+                    again = False
+                    confirm = False
+                if confirm_again == "Y" or confirm_again == "y":
+                    confirm = False
+            continue
+        return self.pengguna_menu(username)
 
 if __name__ == "__main__":
     app = LibraryApp()
