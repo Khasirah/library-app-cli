@@ -123,6 +123,43 @@ class LibraryApp:
             except:
                 print(f"{bcolors.FAIL}menu tidak tersedia{bcolors.ENDC}")
         return choosen_menu
+    
+    def template_page(self, username):
+        os.system("cls")
+        self.header()
+        self.cetak_pengguna(username)
+        print("")
+        return
+    
+    def konfirmasi_ulang(self):
+        confirm = True
+        while confirm:
+            confirm_again = input("Apakah Anda ingin melakukan operasi ini lagi? (Y/n) ")
+            if confirm_again not in ["y", "Y", "n", "N"]:
+                print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                continue
+            if confirm_again == "y" or confirm_again == "Y":
+                confirm = False
+                again = True
+                return again
+            if confirm_again == "N" or confirm_again == "n":
+                again = False         
+                confirm = False
+                return again
+
+    def konfirmasi_operasi(self):
+        again = True
+        while again:
+            submit = input("Apakah anda yakin? (Y/n) ")
+            if submit not in ["Y", "y", "N", "n"]:
+                print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
+                continue
+            if submit == "Y" or submit == "y":
+                again = False
+                return True
+            if submit == "N" or submit == "n":
+                again = False
+                return False
 
     def keluar_aplikasi(self):
         print(f"{bcolors.OKCYAN}terimakasih{bcolors.ENDC}")
@@ -130,9 +167,7 @@ class LibraryApp:
 
 # bagian pengguna
     def pengguna_menu(self, username):
-        os.system("cls")
-        self.header()
-        self.cetak_pengguna(username)
+        self.template_page(username)
         menus = ["daftar pengguna", "tambah pengguna", "ubah pengguna", "hapus pengguna", "kembali ke dashboard", "keluar aplikasi"]
         choosen_menu = self.cetak_menu(menus, "Pengguna Menu")
         if choosen_menu == 1:
@@ -150,9 +185,7 @@ class LibraryApp:
 
     def menu_daftar_pengguna(self,username):
         users = api.get_users()
-        os.system("cls")
-        self.header()
-        self.cetak_pengguna(username)
+        self.template_page(username)
         t = PrettyTable(["No", "NIK", "Nama", "Alamat"])
         for i in range(len(users)):
             t.add_row([i+1, users[i]["nik"], users[i]["nama"], users[i]["alamat"]])
@@ -164,10 +197,7 @@ class LibraryApp:
         again = True
         while again:
             data = {}
-            os.system("cls")
-            self.header()
-            self.cetak_pengguna(username)
-            print("")
+            self.template_page(username)
             result = {}
             try:
                 data["nik"] = int(input("Masukkan NIK : "))
@@ -187,26 +217,14 @@ class LibraryApp:
                     again = False
             except:
                 print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}")
-                confirm = True
-                while confirm:
-                    confirm_again = input("Apakah Anda ingin menambah anggota lagi? (Y/n)")
-                    if confirm_again not in ["y", "Y", "n", "N"]:
-                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                    if confirm_again == "N" or confirm_again == "n":
-                        again = False
-                        confirm = False
-                    if confirm_again == "Y" or confirm_again == "y":
-                        confirm = False
+                again = self.konfirmasi_ulang()
         return self.pengguna_menu(username)
 
     def menu_ubah_pengguna(self, username):
         again = True
         while again:
             data = {}
-            os.system("cls")
-            self.header()
-            self.cetak_pengguna(username)
-            print("")
+            self.template_page(username)
             result = {}
             try:
                 nik = int(input("Masukkan NIK yang ingin diubah: "))
@@ -249,76 +267,36 @@ class LibraryApp:
                     again = False
             except:
                 print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}")
-                confirm = True            
-                while confirm:
-                    confirm_again = input("Apakah Anda ingin mengubah anggota lagi? (Y/n)")
-                    if confirm_again not in ["y", "Y", "n", "N"]:
-                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                    if confirm_again == "N" or confirm_again == "n":
-                        again = False
-                        confirm = False
-                    if confirm_again == "Y" or confirm_again == "y":
-                        confirm = False
+                again = self.konfirmasi_ulang()
         return self.pengguna_menu(username)
     
     def menu_hapus_pengguna(self, username):
         again = True
         while again:
-            os.system("cls")
-            self.header()
-            self.cetak_pengguna(username)
-            print("")
+            self.template_page(username)
             result = {}
             nik = 0
             try:
                 nik = int(input("Masukkan NIK yang ingin dihapus: "))
             except:
                 print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}") 
-                confirm = True            
-                while confirm:
-                    confirm_again = input("Apakah Anda ingin menghapus anggota lagi? (Y/n)")
-                    if confirm_again not in ["y", "Y", "n", "N"]:
-                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                    if confirm_again == "N" or confirm_again == "n":
-                        again = False
-                        confirm = False
-                    if confirm_again == "Y" or confirm_again == "y":
-                        confirm = False
+                again = self.konfirmasi_ulang()
                 continue
-            result = api.delete_user(nik)
-            if result["status"]:
-                print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
-                confirm = True            
-                while confirm:
-                    confirm_again = input("Apakah Anda ingin menghapus anggota lagi? (Y/n)")
-                    if confirm_again not in ["y", "Y", "n", "N"]:
-                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                    if confirm_again == "N" or confirm_again == "n":
-                        again = False
-                        confirm = False
-                    if confirm_again == "Y" or confirm_again == "y":
-                        confirm = False
-            if not result["status"]:
-                print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
-                confirm = True            
-                while confirm:
-                    confirm_again = input("Apakah Anda ingin menghapus anggota lagi? (Y/n)")
-                    if confirm_again not in ["y", "Y", "n", "N"]:
-                        print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                    if confirm_again == "N" or confirm_again == "n":
-                        again = False
-                        confirm = False
-                    if confirm_again == "Y" or confirm_again == "y":
-                        confirm = False
+            submit = self.konfirmasi_operasi()
+            if submit:
+                result = api.delete_user(nik)
+                if result["status"]:
+                    print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+                if not result["status"]:
+                    print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
+            again = self.konfirmasi_ulang()
             continue
         return self.pengguna_menu(username)
 
 # bagian buku
     def buku_menu(self, username):
-        os.system("cls")
-        self.header()
-        self.cetak_pengguna(username)
-        menus = ["daftar buku", "tambah buku", "ubah buku", "hapus buku", "kembali ke dashboard", "keluar aplikasi"]
+        self.template_page(username)
+        menus = ["daftar buku", "tambah buku", "ubah buku", "hapus buku", "cari buku", "kembali ke dashboard", "keluar aplikasi"]
         choosen_menu = self.cetak_menu(menus, "Buku Menu")
         if choosen_menu == 1:
             return self.menu_daftar_buku(username)
@@ -327,17 +305,17 @@ class LibraryApp:
         elif choosen_menu == 3:
             return self.menu_ubah_buku(username)
         elif choosen_menu == 4:
-            return 4
+            return self.menu_hapus_buku(username)
         elif choosen_menu == 5:
-            return self.dashboard_page(username)
+            return self.cari_buku(username)
         elif choosen_menu == 6:
+            return self.dashboard_page(username)
+        elif choosen_menu == 7:
             return self.keluar_aplikasi()
 
     def menu_daftar_buku(self,username):
         books = api.get_books()
-        os.system("cls")
-        self.header()
-        self.cetak_pengguna(username)
+        self.template_page(username)
         t = PrettyTable(["No", "ID", "Judul", "Penulis", "Tahun Terbit", "Penerbit", "Tgl di Perpustakaan", "Tgl di Update", "diinput oleh"])
         for i in range(len(books)):
             t.add_row([i+1, books[i]["book_id"], books[i]["book_title"], books[i]["book_author"], books[i]["year_of_publication"], books[i]["publisher"], dt.datetime.fromtimestamp(books[i]["created_at"] / 1000).strftime("%d-%m-%Y %H:%M:%S"), dt.datetime.fromtimestamp(books[i]["updated_at"] / 1000).strftime("%d-%m-%Y %H:%M:%S"), books[i]["created_by"]])
@@ -349,35 +327,21 @@ class LibraryApp:
         again = True
         while again:
             data = {}
-            os.system("cls")
-            self.header()
-            self.cetak_pengguna(username)
-            print("")
-            result = {}
+            self.template_page(username)
             print(f"{bcolors.WARNING}pastikan cek terlebih dahulu sebelum (enter){bcolors.ENDC}")
             data["book_title"] = input("Masukkan judul buku: ")
             data["book_author"] = input("Masukkan nama penulis: ")
             data["year_of_publication"] = input("Masukkan tahun terbit: ")
             data["publisher"] = input("Masukkan penerbit: ")
             data["created_by"] = username
-            result = api.post_book(data)
-            if result["status"]:
-                print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
-            if not result["status"]:
-                print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
-            confirm = True
-            while confirm:
-                confirm_again = input("Apakah Anda ingin menambah buku lagi? (Y/n)")
-                if confirm_again not in ["y", "Y", "n", "N"]:
-                    print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                    continue
-                if confirm_again == "y" or confirm_again == "Y":
-                    confirm = False
-                    continue
-                if confirm_again == "N" or confirm_again == "n":
-                    again = False         
-                    confirm = False
-                    continue
+            submit = self.konfirmasi_operasi()
+            if submit:
+                result = api.post_book(data)
+                if result["status"]:
+                    print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+                if not result["status"]:
+                    print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
+            again = self.konfirmasi_ulang()
 
         return self.buku_menu(username)
 
@@ -385,16 +349,12 @@ class LibraryApp:
         again = True
         while again:
             data = {}
-            os.system("cls")
-            self.header()
-            self.cetak_pengguna(username)
-            print("")
+            self.template_page(username)
             print(f"{bcolors.WARNING}pastikan cek terlebih dahulu sebelum (enter){bcolors.ENDC}")
             book_id = -1
             book_id = input("Masukkan id buku: ")
             book = api.get_book_by_id(book_id)
             if book["status"]:
-                result = {}
                 print(f"ID Buku: {book['data'][0]['book_id']}")
                 print(f"Judul Buku: {book['data'][0]['book_title']}")
                 print(f"Penulis: {book['data'][0]['book_author']}")
@@ -408,30 +368,61 @@ class LibraryApp:
                 data["year_of_publication"] = input("Masukkan tahun terbit baru: ")
                 data["publisher"] = input("Masukkan penerbit baru: ")
                 print(f"{bcolors.WARNING}apabila kosong maka dianggap tidak diubah{bcolors.ENDC}")
-                input("")
-                result = api.change_book(data)
-                if result["status"]:
-                    print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
-                if not result["status"]:
-                    print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
+                submit = self.konfirmasi_operasi()
+                if submit:
+                    result = api.change_book(data)
+                    if result["status"]:
+                        print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+                    if not result["status"]:
+                        print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
             if not book["status"]:
                 print(f"{bcolors.FAIL}{book['detail']}{bcolors.ENDC}")
-            confirm = True
-            while confirm:
-                confirm_again = input("Apakah Anda ingin mengubah data buku lagi? (Y/n) ")
-                if confirm_again not in ["y", "Y", "n", "N"]:
-                    print(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                    continue
-                if confirm_again == "y" or confirm_again == "Y":
-                    confirm = False
-                    continue
-                if confirm_again == "N" or confirm_again == "n":
-                    again = False         
-                    confirm = False
-                    continue
+            again = self.konfirmasi_ulang()
             
         return self.buku_menu(username)
+    
+    def menu_hapus_buku(self, username):
+        again = True
+        while again:
+            self.template_page(username)
+            book_id = input("Masukkan id buku: ")
+            book = api.get_book_by_id(book_id)
+            if book["status"]:
+                print(f"ID Buku: \t{book['data'][0]['book_id']}")
+                print(f"Judul Buku: \t{book['data'][0]['book_title']}")
+                print(f"Penulis: \t{book['data'][0]['book_author']}")
+                print(f"Tahun terbit: \t{book['data'][0]['year_of_publication']}")
+                print(f"Penerbit: \t{book['data'][0]['publisher']}")
+                print(f"{bcolors.WARNING}buku tersebut akan dihapus.{bcolors.ENDC}")
+                submit = self.konfirmasi_operasi()
+                if submit:
+                    result = api.delete_book(book_id)
+                    if result["status"]:
+                        print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+                    if not result["status"]:
+                        print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
+            if not book["status"]:
+                print(f"{bcolors.FAIL}{book['detail']}{bcolors.ENDC}")        
+            again = self.konfirmasi_ulang()
 
+        return self.buku_menu(username)
+    
+    def cari_buku(self, username):
+        again = True
+        while again:
+            self.template_page(username)
+            book_name = input("Masukkan naama buku yang ingin dicari: ")
+            result = api.get_book_by_name(book_name)
+            if result["status"]:
+                t = PrettyTable(["No", "ID", "Judul", "Penulis", "Tahun Terbit", "Penerbit", "Tgl di Perpustakaan", "Tgl di Update", "diinput oleh"])
+                for i in range(len(result["data"])):
+                    t.add_row([i+1, result["data"][i]["book_id"], result["data"][i]["book_title"], result["data"][i]["book_author"], result["data"][i]["year_of_publication"], result["data"][i]["publisher"], dt.datetime.fromtimestamp(result["data"][i]["created_at"] / 1000).strftime("%d-%m-%Y %H:%M:%S"), dt.datetime.fromtimestamp(result["data"][i]["updated_at"] / 1000).strftime("%d-%m-%Y %H:%M:%S"), result["data"][i]["created_by"]])
+                print(t)
+            if not result["status"]:
+                print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
+            again = self.konfirmasi_ulang()
+
+        return self.buku_menu(username)
 
 if __name__ == "__main__":
     app = LibraryApp()

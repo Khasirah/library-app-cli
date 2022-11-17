@@ -124,6 +124,20 @@ def get_book_by_id(book_id):
     else:
         return {"status": False, "detail": "harap masukkan angka"}
 
+def get_book_by_name(book_name: str) -> dict:
+    # check book_name
+    if book_name.isspace() or len(book_name) == 0:
+        return {"status": False, "detail": "nama buku tidak boleh kosong"}
+    
+    books = get_books()
+    book_name = u.delete_first_char_space(book_name).lower()
+    books = list(filter(lambda book: book_name in book["book_title"].lower(), books))
+    
+    if len(books) == 0:
+        return {"status": False, "detail": "buku tidak ditemukan"}
+
+    return {"status": True, "data": books}
+
 # --------------------------------------
 # POST
 def post_book(data):
@@ -162,10 +176,11 @@ def post_book(data):
 def change_book(data):
     time_now = int(round(time.time() * 1000))
     books = get_books()
-    books = list(filter(lambda book: book["book_id"] != int(data["book_id"]), books))
+    current_book_index = u.search_index(books, int(data["book_id"]), "book_id")
     current_book = get_book_by_id(data["book_id"])
     current_book = current_book["data"][0]
     data["book_id"] = int(data["book_id"])
+    books = list(filter(lambda book: book["book_id"] != int(data["book_id"]), books))
     
     # check book_title
     if data["book_title"].isspace() or len(data["book_title"]) == 0:
@@ -208,8 +223,27 @@ def change_book(data):
         }
 
     try:
-        books.insert(data["book_id"], book)
+        books.insert(current_book_index, book)
         write_data_to_db(books, PATH_BOOKS)
         return {"status": True, "detail": "berhasil memasukkan ke database"}
     except:
         return {"status": False, "detail": "gagal memasukkan ke database"}
+    
+# --------------------------------------------------
+# DELETE
+def delete_book(book_id):
+    books = get_books()
+    pattern_number_only = '^\d+$'
+    is_number = re.match(pattern_number_only, book_id)
+    if is_number:
+        book_id = int(book_id)
+        if book_id < 0:
+            return {"status": False, "detail": "angka tidak boleh lebih kecil dari 0"}
+        books = list(filter(lambda book: book["book_id"] != book_id, books))
+        try:
+            write_data_to_db(books, PATH_BOOKS)
+            return {"status": True, "detail": "berhasil menghapus data"}
+        except:
+            return {"status": False, "detail": "gagal menghapus data"}
+    else:
+        return {"status": False, "detail": "harap masukkan angka"}
