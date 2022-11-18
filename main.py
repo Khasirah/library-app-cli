@@ -8,7 +8,6 @@ from prettytable import PrettyTable
 import datetime as dt
 
 class LibraryApp:
-    """LibraryApp administration"""
     def __init__(self) -> None:
         os.system("cls")
         self.is_login = False
@@ -20,7 +19,6 @@ class LibraryApp:
         self.login_menu()
 
     def header(self):
-        """header every page must have"""
         os.system("cls")
         print(".--.           .---.        .-.".center(self.size_terminal))
         print("   .---|--|   .-.     | A |  .---. |~|    .--.".center(self.size_terminal))
@@ -37,7 +35,6 @@ class LibraryApp:
     def login_validation(self, username, password):
         user = api.get_user(username)
         result = {}
-      
         if len(user) == 0:
             result["status"] = False
             result["detail"] = "username tidak ditemukan"
@@ -59,7 +56,6 @@ class LibraryApp:
         is_password_correct = False
         count_incorrect = 0
         username = ""
-     
         while ((not is_password_correct) and (count_incorrect <= 2)):
             username = input("Username: ")
             password = getpass.getpass("Password: ")
@@ -179,7 +175,7 @@ class LibraryApp:
         elif choosen_menu == 5:
             return self.dashboard_page(username)
         elif choosen_menu == 6:
-            return self.keluar_aplikasi() 
+            return self.keluar_aplikasi()
 
     def menu_daftar_pengguna(self,username):
         users = api.get_users()
@@ -387,7 +383,7 @@ class LibraryApp:
                     if not result["status"]:
                         print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
             if not book["status"]:
-                print(f"{bcolors.FAIL}{book['detail']}{bcolors.ENDC}")        
+                print(f"{bcolors.FAIL}{book['detail']}{bcolors.ENDC}")
             again = self.konfirmasi_ulang()
 
         return self.buku_menu(username)
