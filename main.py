@@ -91,21 +91,19 @@ class LibraryApp:
             print(f"selamat datang, {user['username']}".rjust(self.size_terminal))
             print(f"{bcolors.HEADER}INFORMASI{bcolors.ENDC}")
             print("-"*self.size_terminal)
-            print(f"{'Total Buku': <10}{'Total Pengguna': ^25}{'Total Buku Dipinjam': ^25}{'Total Buku Mendakati Jatuh Tempo (H-3)': ^40}{'Total Buku Melewati Batas Pengembalian': >40}")
+            print(f"{'Total Buku': <10}{'Total Pengguna': ^25}")
             print(f"{total_books: ^10}{total_users: ^25}")
             print("="*self.size_terminal)
             self.dashboard_menu(username)
 
     def dashboard_menu(self, username):
-        menus = ["pengguna", "buku", "peminjaman buku", "keluar aplikasi"]
+        menus = ["pengguna", "buku", "keluar aplikasi"]
         choosen_menu = self.cetak_menu(menus, "Menu Aplikasi")
         if choosen_menu == 1:
             return self.pengguna_menu(username)
         elif choosen_menu == 2:
             return self.buku_menu(username)
         elif choosen_menu == 3:
-            print(3)
-        elif choosen_menu == 4:
             return self.keluar_aplikasi() 
 
     def cetak_menu(self, menus: list, judul: str):
@@ -210,14 +208,9 @@ class LibraryApp:
                     print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
                 if not result["status"]:
                     print(f"{bcolors.FAIL}{result['detail']}{bcolors.ENDC}")
-                confirm_again = input("Apakah Anda ingin menambah anggota lagi? (Y/n)")
-                if confirm_again not in ["y", "Y", "n", "N"]:
-                    raise Exception(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                if confirm_again == "N" or confirm_again == "n":
-                    again = False
             except:
                 print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}")
-                again = self.konfirmasi_ulang()
+            again = self.konfirmasi_ulang()
         return self.pengguna_menu(username)
 
     def menu_ubah_pengguna(self, username):
@@ -234,6 +227,7 @@ class LibraryApp:
                     print(f"NIK : {user['nik']}")
                     print(f"Nama : {user['nama']}")
                     print(f"Alamat : {user['alamat']}")
+                    print("")
                     print("data diubah menjadi:")
                     data["nik"] = input("Masukkan NIK baru: ")
                     if len(data["nik"]) == 0:
@@ -248,11 +242,7 @@ class LibraryApp:
                         data["alamat"] = user["alamat"]
                     if user == data:
                         print(f"{bcolors.OKBLUE}data tidak ada yang berubah{bcolors.ENDC}")
-                        confirm_again = input("Apakah Anda ingin mengubah anggota lagi? (Y/n)")
-                        if confirm_again not in ["y", "Y", "n", "N"]:
-                            raise Exception(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                        if confirm_again == "N" or confirm_again == "n":
-                            again = False
+                        again = self.konfirmasi_ulang()
                         continue
                     data["nik"] = int(data["nik"])
                     result = api.change_user(data, nik)
@@ -260,14 +250,9 @@ class LibraryApp:
                         print(f"{bcolors.OKCYAN}{result['detail']}{bcolors.ENDC}")
                 if len(user) == 0:
                     print(f"{bcolors.FAIL}user tidak ditemukan{bcolors.ENDC}")
-                confirm_again = input("Apakah Anda ingin mengubah anggota lagi? (Y/n)")
-                if confirm_again not in ["y", "Y", "n", "N"]:
-                    raise Exception(f"{bcolors.FAIL}pilihan tidak tersedia{bcolors.ENDC}")
-                if confirm_again == "N" or confirm_again == "n":
-                    again = False
             except:
                 print(f"{bcolors.FAIL}nik harus angka{bcolors.ENDC}")
-                again = self.konfirmasi_ulang()
+            again = self.konfirmasi_ulang()
         return self.pengguna_menu(username)
     
     def menu_hapus_pengguna(self, username):

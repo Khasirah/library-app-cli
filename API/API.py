@@ -7,6 +7,22 @@ from utilities import utilities as u
 PATH_BOOKS = "databases\\Book.json"
 PATH_USER = "databases\\User.json"
 
+# create DB
+def create_db(db_name: str, data: list):
+    path = "databases"
+    is_folder_db_exist = os.path.exists("databases")
+    if not is_folder_db_exist:
+        os.mkdir("databases")
+    is_db_exist = os.path.exists(f"{path}\\{db_name}")
+    if not is_db_exist:
+        json_string = json.dumps(data)
+        with open(f"{path}\\{db_name}", "w") as db:
+            db.write(json_string)
+            db.close()
+        print(f"berhasil membuat {db_name}")
+    if is_db_exist:
+        print(f"berhasil terhubung ke databases {db_name}")
+
 # write data to db
 def write_data_to_db(data, db):
     json_string = json.dumps(data)
@@ -79,22 +95,6 @@ def delete_user(username):
         db.write(json_string)
         db.close()
     return {"status": True, "detail": "berhasil menghapus data"}
-
-# create DB
-def create_db(db_name: str, data: list):
-    path = "databases"
-    is_folder_db_exist = os.path.exists("databases")
-    if not is_folder_db_exist:
-        os.mkdir("databases")
-    is_db_exist = os.path.exists(f"{path}\\{db_name}")
-    if not is_db_exist:
-        json_string = json.dumps(data)
-        with open(f"{path}\\{db_name}", "w") as db:
-            db.write(json_string)
-            db.close()
-        print(f"berhasil membuat {db_name}")
-    if is_db_exist:
-        print(f"berhasil terhubung ke databases {db_name}")
 
 # book json
 # ======================================
