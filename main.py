@@ -81,10 +81,7 @@ class LibraryApp:
         total_books = api.get_total_book()
         total_users = api.get_total_user()
         if self.is_login:
-            self.header()
-            user = list(api.get_user(username))
-            user = user[0]
-            print(f"selamat datang, {user['username']}".rjust(self.size_terminal))
+            self.template_page(username) 
             print(f"{bcolors.HEADER}INFORMASI{bcolors.ENDC}")
             print("-"*self.size_terminal)
             print(f"{'Total Buku': <10}{'Total Pengguna': ^25}")
@@ -157,6 +154,7 @@ class LibraryApp:
 
     def keluar_aplikasi(self):
         print(f"{bcolors.OKCYAN}terimakasih{bcolors.ENDC}")
+        self.is_login = False
         quit()
 
 # bagian pengguna
