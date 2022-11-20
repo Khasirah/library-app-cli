@@ -38,20 +38,17 @@ def open_db_users():
 
 # GET
 def get_user(username):
-    with open(PATH_USER, "r") as json_file:
-        users = json.load(json_file)
-        return list(filter(lambda user: user["username"] == username, users))
+    users = open_db_users()
+    return list(filter(lambda user: user["username"] == username, users))
     
 def get_total_user():
-    with open(PATH_USER, "r") as json_file:
-        users = json.load(json_file)
-        return len(users)
+    users = open_db_users() 
+    return len(users)
 
 def get_users():
-    with open(PATH_USER, "r") as json_file:
-        users = json.load(json_file)
-        users = filter(lambda user: user.pop('password'), users)
-        return list(users)
+    users = open_db_users() 
+    users = filter(lambda user: user.pop('password'), users)
+    return list(users)
 
 def get_user_by_nik(nik):
     users = open_db_users()
